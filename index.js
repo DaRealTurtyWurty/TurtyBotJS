@@ -32,8 +32,14 @@ client.on("ready", () => {
 	});
 });
 
+client.on("ready", () =>{
+	console.log("putin");
+});
+
 client.on("message", async message => {
 	const prefix = process.env.PREFIX;
+	
+	if(message.content.contains("putin")) message.channel.send("https://www.youtube.com/watch?v=Wl959QnD3lM");
 
 	if (message.author.bot) return;
 	if (!message.guild) return;
