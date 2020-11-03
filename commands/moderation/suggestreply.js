@@ -7,7 +7,7 @@ module.exports = {
     description: "Reply to a suggestion in #suggestions",
     usage: "<Message ID>",
     run: async (client, message, args) => {
-        if (message.author.id != 309776610255437824) return message.reply("You do not have permission to use this command!").then(m => m.delete({ timeout: 15000 }));
+        if (message.author.id != 309776610255437824 || 411601775078932491) return message.reply("You do not have permission to use this command!").then(m => m.delete({ timeout: 15000 }));
 
         if (!args[0]) return message.reply("You must supply the message ID").then(m => m.delete({ timeout: 15000 }));
 
