@@ -1,10 +1,10 @@
-const { Client, RichEmbed, Collection, Guild } = require("discord.js");
-const { config } = require("dotenv");
+const { Client, Collection, MessageEmbed } = require("discord.js");
+require("dotenv").config({
+	path: __dirname + "/.env"
+});
 const fs = require("fs");
-const http = require('http');
-const PouchDB = require("pouchdb");
-PouchDB.plugin(require('pouchdb-upsert'));
-const database = new PouchDB('levels');
+const levels = require('discord-xp');
+levels.setURL(`mongodb+srv://${process.env.PASSWORD}@turtybot.b8ggp.mongodb.net/test`);
 
 const client = new Client({
 	disableMentions: "everyone"
@@ -13,10 +13,6 @@ const client = new Client({
 client.commands = new Collection();
 client.aliases = new Collection();
 client.categories = fs.readdirSync("./commands/");
-
-config({
-	path: __dirname + "/.env"
-});
 
 ["command"].forEach(handler => {
 	require(`./handlers/${handler}`)(client);
@@ -39,6 +35,8 @@ client.on("message", async message => {
 	if (!message.guild) return;
 	if (!message.content.startsWith(prefix)) return;
 	if (!message.member) message.member = await message.guild.fetchMember(message);
+
+	message.channel.send("e");
 
 	const args = message.content.slice(prefix.length).trim().split(/ +/g);
 
@@ -64,52 +62,21 @@ client.on('guildMemberAdd', member => {
 	member.roles.add(member.guild.roles.cache.find(role => role.name === 'Member'));
 });
 
-client.on("message", async message => {
-	if (getRndInteger(0, 2) == 0 && message.author != client.user) {
-		var level = await database.get(message.author.id).then(r => {
-			console.log(r);
-			return r.currentlevel;
-		});
-
-		var response = await database.upsert(message.author.id, myDeltaFunction).catch(function (err) {
-			return database.putIfNotExists({
-				_id: message.author.id,
-				xp: getRndInteger(5, 25),
-				currentlevel: 0
-			});
-		});
-		console.log(response);
-
-		var newlevel = await database.get(message.author.id).then(r => {
-			return r.currentlevel;
-		});
-
-		console.log(level + " " + newlevel);
-
-		if (newlevel > level) {
-			message.channel.send(`Congratulations <@${message.author}. You are now level ${newlevel}! POG!`)
-		}
-	}
-});
-
-function myDeltaFunction(doc) {
-	doc.xp += getRndInteger(5, 25);
-	console.log(doc.xp);
-	doc.currentlevel = Math.floor(0.0006 * response.xp) >= 5 ? determineXPLevel(response.xp) : Math.floor(0.0006 * response.xp);
-	return doc;
-}
-
-function determineXPLevel(xp) {
-	if (xp < 250) return 0;
-	if (xp < 650 && xp >= 250) return 1;
-	if (xp < 1100 && xp >= 650) return 2;
-	if (xp < 1700 && xp >= 1100) return 3;
-	if (xp < 2250 && xp >= 1700) return 4;
-	if (xp < 3000 && xp >= 2250) return 5;
-}
-
 function getRndInteger(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+// Levelling System
+client.on("message", async message => {
+	if (!message.guild) return;
+	if (message.author.bot) return;
+
+	const randXp = Math.floor(Math.random() * 9) + 1;
+	const hasLeveledUp = await levels.appendXp(message.author.id, message.guild.id, randXp);
+	if (hasLeveledUp) {
+		const user = await levels.fetch(message.author.id, message.guild.id);
+		message.channel.send(new MessageEmbed().setDescription(`Pog Champ, ${message.author} leveled up to level: **${user.level}**. Congrats 🎉!`).setColor("RANDOM"));
+	}
+});
 
 client.login(process.env.TOKEN);
