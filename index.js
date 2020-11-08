@@ -4,7 +4,7 @@ require("dotenv").config({
 });
 const fs = require("fs");
 const levels = require('discord-xp');
-levels.setURL(`mongodb+srv://${process.env.PASSWORD}@turtybot.b8ggp.mongodb.net/test`);
+//levels.setURL(`mongodb+srv://${process.env.PASSWORD}@turtybot.b8ggp.mongodb.net/test`);
 
 const client = new Client({
 	disableMentions: "everyone"
