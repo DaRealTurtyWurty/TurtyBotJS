@@ -35,9 +35,9 @@ module.exports = {
         const embed = new MessageEmbed()
             .setColor("RANDOM")
             .setThumbnail(guild.iconURL())
-            .setFooter(message.author.tag, message.author.displayAvatarURL())
+            .setFooter(/*message.author.tag, message.author.displayAvatarURL()*/ `Developed by Turty Wurty`)
             .setTimestamp()
-            .setTitle(`Server Info for server: ${guild.name}`);
+            .setTitle(`Info for ${guild.name}`);
         
         if(!args[0] || args[0] != 2) {
             embed.addField("AFK Channel Name:", afkChannel || "None", true)
@@ -54,7 +54,7 @@ module.exports = {
                 .addField("Explicit Content Level:", guild.explicitContentFilter.replace("DISABLED", "None").replace("MEMBERS_WITHOUT_ROLES", "Members without roles").replace("ALL_MEMBERS", "All Members"), true)
                 .addField("Server Icon Hash:", guild.icon, true)
                 .addField("Server ID:", guild.id, true)
-                .addField(`Is "large":`, guild.large, true)
+                .addField("Is \"large\":", guild.large, true)
                 .addField("Member Count:", guild.memberCount, true)
                 .addField("MFA Level:", guild.mfaLevel, true)
                 .addField("Server Name:", guild.name, true)
