@@ -1,6 +1,6 @@
 module.exports = {
     getMember: function (message, command) {
-        let target = message.mentions.first() || client.users.cache.find(u => u.tag === message.split(command)[1]) || message.guild.members.cache.get(message.split(command)[1]);
+        let target = message.mentions.members.first() || client.users.cache.find(u => u.tag === message.split(command)[1]) || message.guild.members.cache.get(message.split(command)[1]);
         return target;
     },
 

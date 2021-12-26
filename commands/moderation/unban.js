@@ -7,23 +7,22 @@ module.exports = {
     aliases: ["ub", "unbanish"],
     category: "moderation",
     usage: "<user-id reason>",
-    run: async(client, message, args) => {
-        if(!message.member.hasPermission(["BAN_MEMBERS", "ADMINISTRATOR"])) return message.channel.send("You do not have permission to perform this command!").then(m => m.delete({ timeout: 15000 }));
-        
-        let user = await client.fetchUser(args[0]);
-        if(!user) return message.channel.send("Please provide the user that you want to unban!").then(m => m.delete({ timeout: 15000 }));
-        
-        let reason = args.slice(1).join(" ");
-        if(!reason) return message.channel.send("Please provide a reason.").then(m => m.delete({ timeout: 15000 }));
+    run: async (client, message, args) => {
+        if (!message.member.hasPermission(["BAN_MEMBERS", "ADMINISTRATOR"])) return message.channel.send("You do not have permission to perform this command!").then(m => m.delete({ timeout: 15000 }));
 
-        if(!message.guild.me.hasPermission(["BAN_MEMBERS", "ADMINISTRATOR"])) return message.channel.send("I do not have permission to unban members!").then(m => m.delete({ timeout: 15000 }));
-        if(message.deletable) message.delete();
+        if (!args[0]) return message.channel.send("You must supply the user to unban!");
+
+        let reason = args.slice(1).join(" ");
+        if (!reason) return message.channel.send("Please provide a reason.").then(m => m.delete({ timeout: 15000 }));
+
+        if (!message.guild.me.hasPermission(["BAN_MEMBERS", "ADMINISTRATOR"])) return message.channel.send("I do not have permission to unban members!").then(m => m.delete({ timeout: 15000 }));
+        if (message.deletable) message.delete();
         try {
-            message.guild.unban(user, {reason: reason}).catch(err => {
+            message.guild.unban(args[0], { reason: reason }).catch(err => {
                 console.log(err.message);
             });
             message.channel.send(`${user.tag} has been unbanned from this server.`)
-        } catch(err) {
+        } catch (err) {
             message.channel.send(err).then(m => m.delete({ timeout: 25000 }));
         }
 
@@ -40,7 +39,7 @@ module.exports = {
                 **>Unbanned By:** ${message.author} (${message.author.id})
                 **>Reason:** ${args.slice(1).join(" ")}`);
         let channel = message.guild.channels.cache.find(c => c.name === "admin-notices");
-        if(!channel) message.guild.owner.send(`Unable to find channel(\`#admin-notices\`) in the guild: \`${message.guild.name}\``);
+        if (!channel) message.guild.owner.send(`Unable to find channel(\`#admin-notices\`) in the guild: \`${message.guild.name}\``);
         else channel.send(embed);
     }
 }

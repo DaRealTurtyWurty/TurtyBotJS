@@ -36,8 +36,6 @@ client.on("message", async message => {
 	if (!message.content.startsWith(prefix)) return;
 	if (!message.member) message.member = await message.guild.fetchMember(message);
 
-	message.channel.send("e");
-
 	const args = message.content.slice(prefix.length).trim().split(/ +/g);
 
 	const cmd = args.shift().toLowerCase();
@@ -47,7 +45,7 @@ client.on("message", async message => {
 	let command = client.commands.get(cmd);
 
 	if (command != undefined) {
-		if (command.name == "topic" || command.name == "wyr") {
+		if (command.name === "topic" || command.name === "wyr") {
 			command.run(client, message, args);
 			return;
 		}
